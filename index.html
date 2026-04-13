@@ -535,10 +535,26 @@
   const N   = PRIZES.length;
   const ARC = (2 * Math.PI) / N;
 
-  const IS_DEV = true; // 回数制限なし（制限を戻す時はfalseに変更）
+  const IS_DEV = false;
 
-  function hasPlayedToday() { return false; }
-  function markPlayed() {}
+  const STORAGE_KEY = 'motobisakura_roulette_v1';
+
+  function todayStr() {
+    const d = new Date();
+    return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+  }
+
+  function hasPlayedToday() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return false;
+      return JSON.parse(raw).date === todayStr();
+    } catch { return false; }
+  }
+
+  function markPlayed() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ date: todayStr() }));
+  }
 
   // ── Canvas / Wheel ─────────────────────────────────────────
   const canvas = document.getElementById('wheel');
